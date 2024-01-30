@@ -11,11 +11,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: build docker
         run: |
-          docker build  -t prenoms 
+          docker build  -t prenoms .
 
       - name: Docker login
         run: |
