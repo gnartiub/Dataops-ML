@@ -3,7 +3,13 @@ FROM python:3.10-slim
 
 # Set the working directory inside the container
 WORKDIR /app
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
+# Install poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
+
 # Copy the poetry.lock and pyproject.toml files into the container
 COPY poetry.lock pyproject.toml ./
 
