@@ -3,7 +3,7 @@ FROM python:3.10-slim
 
 # Set the working directory inside the container
 WORKDIR /app
-RUN pip install poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
 # Copy the poetry.lock and pyproject.toml files into the container
 COPY poetry.lock pyproject.toml ./
 
