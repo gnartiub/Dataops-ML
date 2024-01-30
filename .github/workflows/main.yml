@@ -35,37 +35,24 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
 
-      - name: Check if Compute Instance 'prenoms-api-christophe' exists
+      - name: Check if Compute Instance 'prenoms-trang' exists
         id: check
-        run: echo "INSTANCE_EXISTS=$(gcloud compute instances list | grep prenoms-api-christophe | wc -l | xargs)" >> "$GITHUB_OUTPUT"
+        run: echo "INSTANCE_EXISTS=$(gcloud compute instances list | grep prenoms-trang | wc -l | xargs)" >> "$GITHUB_OUTPUT"
 
-
-      - name: create (for the first time) API to GCP compute instance
+      - name: Create (for the first time) API to GCP Compute Instance
+        if: steps.check.outputs.INSTANCE_EXISTS == '0'
         run: |
           gcloud compute instances create-with-container prenoms-trang \
-          --container-image gnartiub/prenoms:${{ github.sha }} \
-          --zone europe-west1-b \
-          --container-env FLASK_PORT=80
+            --container-image gnartiub/prenoms:${{ github.sha }}\
+            --zone us-central1-a \
+            --container-env FLASK_PORT=80
 
-
-      - name: API to GCP compute instance
+      - name: Update API to GCP Compute Instance
+        if: steps.check.outputs.INSTANCE_EXISTS != '0'
         run: |
           gcloud compute instances update-container prenoms-trang \
-          --container-image gnartiub/prenoms:${{ github.sha }} \
-          --zone europe-west1-b \
-          --container-env FLASK_PORT=80
+            --container-image gnartiub/prenoms:${{ github.sha }} \
+            --zone us-central1-a \
+            --container-env FLASK_PORT=80 
 
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Install SSH key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Deploy to GCP VM
-        run: |
-          ssh -o StrictHostKeyChecking=no buiquynhtrang1234@ensai-2024.iam.gserviceaccount.com 'docker pull gnartiub/prenoms:${{ github.sha }}'
