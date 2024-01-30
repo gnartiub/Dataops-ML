@@ -14,7 +14,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 COPY poetry.lock pyproject.toml ./
 
 # Install dependencies using Poetry
-RUN poetry install --no-root --no-interaction
+RUN poetry install
 
 # Copy the Flask application code into the container
 COPY . .
